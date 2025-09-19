@@ -1,0 +1,19 @@
+**************************************************
+-------Video loop vulnerability details-----------
+**************************************************
+
+Discovery: 
+The vulnerability was disclosed in May 2019 by researchers 
+at the cybersecurity firm ESET.
+
+Exploitation: 
+The issue is part of a larger problem with unencrypted video
+stream transmission. An attacker who performs a Man-in-the-Middle (MitM) attack
+can intercept the unencrypted video stream. By inserting a custom, modified 
+video stream into the connection, the attacker can create a video loop 
+to hide their activity from the user.
+
+Cause: 
+The DCS-2132L transmits its video feed unencrypted over a TCP tunnel. 
+An attacker on the same local network can intercept this unencrypted communication 
+to manipulate the stream. 
