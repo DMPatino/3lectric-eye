@@ -9,3 +9,6 @@ https://www.manualslib.com/manual/1796258/D-Link-Dcs-2132l-Es.html#google_vignet
 Here is an article that will be helpfull in intercepting and recrafting the video feed.
 Article by We Live Security a part of ESET
 https://www.welivesecurity.com/2019/05/02/d-link-camera-vulnerability-video-stream/
+
+Video showcasing techniques to hack IP cameras.
+https://youtu.be/yMAWcHP6yn8?si=b4gMBulmJXEEhBiK
