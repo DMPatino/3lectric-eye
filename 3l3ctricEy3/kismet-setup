@@ -1,0 +1,64 @@
+Kismet Prerequisites
+System packages
+--------------------------------------------
+sudo apt update
+sudo apt install kismet kismet-plugins build-essential libpcap-dev \
+libusb-1.0-0-dev libdw-dev libnl-3-dev libnl-genl-3-dev
+
+Alfa card drivers — the AWUS036ACH uses the rtl8812au driver which doesn't ship with most kernels by default:
+-------------------------------------------------------------------------------------------------------------
+sudo apt install dkms
+git clone https://github.com/aircrack-ng/rtl8812au
+cd rtl8812au
+sudo make dkms_install
+*After install, confirm the card is visible:*
+iwconfig
+# or
+iw dev
+*Add user to kismet group so students don't need to run as root:
+sudo usermod -aG kismet $USER
+*Log out and back in for it to take effect.
+
+Monitor Mode
+--------------------------------------------------------
+Before launching Kismet, put the Alfa into monitor mode:
+sudo airmon-ng check kill    # kills interfering processes
+sudo airmon-ng start wlan0   # creates wlan0mon
+Confirm with iwconfig wlan0mon — should show Mode: Monitor.
+
+Basic Kismet Usage for DF
+---------------------------------------------------------
+Launch:
+kismet -c wlan0mon
+
+Kismet spins up a web UI at http://localhost:2501 — open it in a browser. Default login is set on first run.
+What students are looking for:
+
+SSID of the exercise AP
+BSSID (MAC address)
+Signal strength (dBm) — this is their compass
+Channel
+
+DF technique with the Yagi:
+--------------------------------------------------------------
+The Yagi gives directionality that the Alfa's stock antenna doesn't. Basic process:
+
+Start with omnidirectional scan to identify the target SSID and note its signal level
+Mount or hold the Yagi and rotate slowly — signal increases as you point toward the source
+Take a bearing from at least two separated positions — triangulate to narrow the hide location
+Move toward the stronger bearing, take another reading, repeat
+
+Signal strength tip for the AAR: Kismet displays RSSI in dBm — closer to 0 is stronger (-40 dBm is strong, -80 dBm is weak). 
+Students sometimes get this backwards initially. Worth a quick brief before the evolution.
+
+Quick Kismet Config Tip
+-------------------------------------------------------------------
+Drop a kismet.conf override in /etc/kismet/kismet_site.conf so students don't have to configure anything on launch:
+source=wlan0mon
+log_prefix=/home/student/captures/
+log_types=kismetdb,pcapng
+
+The pcapng log is what they'll use for the AAR packet review.
+
+
+
